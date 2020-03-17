@@ -1,6 +1,7 @@
 This Project is done by : Salem Doub && George Bardaghji 
                               L3 Informatique Option Web
 
+ Notre projet est un pictionary game en ligne. Les joueurs peuvent créer un compte ensuite créer des salles,leurs amis peuvent joindre la salle (en envoyant le numero de la salle )et jouer ensemble en live. Le server donne aléatoirement un mot à dessiner , et le joueur qui va dessiner le mot .
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 ## Available Scripts
