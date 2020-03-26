@@ -1,319 +1,132 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 import io from "socket.io-client";
-import Prompt from '../Prompt/Prompt';
-import './Canvas.css'
 
 const socket = io('localhost:8080');
-
-
 
 export default class Canvas extends Component {
     constructor() {
         super()
         this.state = {
+            username: "",
             isDrawing: false,
             ctx: null,
             currentX: null,
             currentY: null,
-            drawer: true,
-            word: "",
-            winner: null
-
         }
 
         this.canvas = React.createRef();
 
+
+        socket.on('joined', (joined, id) => {
+         //   sessionStorage.id = id;
+         //   this.setState({
+           //     connected: joined
+          //  })
+        })
         socket.on('left', left => {
-
-            // this.setState({connected: left})
-
+         //   this.setState({connected: left})
         })
 
-        socket.on('start', data => {
-            console.log(data.drawer, data.word)
+        socket.on("drawing", event => {
+            console.log('draw')
+            // let objectEvent = JSON.parse(event)
+            this.drawClient(event.x, event.y)
 
-            if(data.drawer !== this.props.username) {
-                this.setState({
-                    drawer: false,
-                    word: data.word,
-                })
-
-            } else {
-                this.setState({
-                    word: data.word
-                })
-            }
-        })
-        socket.on("drawing", data => {
-            let w = window.innerWidth;
-            let h = window.innerHeight;
-            if (!isNaN(data.x0 / w) && !isNaN(data.y0)) {
-                this.drawLine(
-                    data.x0 * w,
-                    data.y0 * h,
-                    data.x1 * w,
-                    data.y1 * h,
-                    data.color
-                );
-            }
         });
-
-        socket.on('winner', data => {
-            console.log("the winner is " + data.winner + " the word was " + data.word)
-            this.setState({
-                winner: data.winner,
-            })
-        })
     }
+
+
+
 
     componentDidMount() {
+        const canvas = this.canvasRef.current
         this.setState({
-            canvas: this.canvas.current
-        });
-
-        this.canvas.current.style.height = window.innerHeight;
-        this.canvas.current.style.width = window.innerWidth;
-        this.canvas.current.addEventListener(
-            "mousedown",
-            this.onMouseDown,
-            false
-        );
-
-        this.canvas.current.addEventListener("mouseup", this.onMouseUp, false);
-        this.canvas.current.addEventListener("mouseout", this.onMouseUp, false);
-        this.canvas.current.addEventListener(
-            "mousemove",
-            this.throttle(this.onMouseMove, 5),
-            false
-        );
-
-        this.canvas.current.addEventListener(
-            "touchstart",
-            this.onMouseDown,
-            false
-        );
-
-        this.canvas.current.addEventListener(
-            "touchmove",
-            this.throttle(this.onTouchMove, 5),
-            false
-        );
-
-        this.canvas.current.addEventListener("touchend", this.onMouseUp, false);
-        window.addEventListener("resize", this.onResize);
-        if(sessionStorage.username) {
-            socket.emit("join", {
-                username: this.props.username,
-                room: this.props.room
-            });
-        }
-
+            ctx: canvas.getContext("2d"),
+        })
     }
 
-    componentDidUpdate() {
-        if(!this.state.drawer) {
-            this.canvas.current.removeEventListener('mouseup', this.onMouseUp)
-            this.canvas.current.removeEventListener('mousedown', this.onMouseDown)
-            this.canvas.current.removeEventListener('mousemove', this.onMouseMove)
-        } else {
-            // this.canvas.current.addEventListener('mouseup', this.onMouseUp, false)
-            // this.canvas.current.addEventListener('mousedown', this.onMouseDown, false)
-            // this.canvas.current.addEventListener(
-            //   "mousemove",
-            //   this.throttle(this.onMouseMove, 5),
-            //   false
-            // )
+    getX = (event) => {
+        if (event.pageX === undefined) {
+            return event.targetTouches[0].pageX - this.canvasRef.current.offsetLeft;
         }
-    }
-
-
-    shouldComponentUpdate(nextProp, nextState) {
-        // if drawer is the same
-        return this.state.drawer !== nextState.drawer;
-    }
-
-    drawLine = (x0, y0, x1, y1, color, emit, force) => {
-        let context = this.state.canvas.getContext("2d");
-        context.beginPath();
-        context.moveTo(x0, y0-68);
-        context.lineTo(x1, y1-68);
-        context.strokeStyle = color;
-        context.lineWidth = 2;
-        // if (force) {
-
-        // 	context.lineWidth = 1.75 * (force * (force + 3.75));
-
-        // }
-        context.stroke();
-        context.closePath();
-
-        if (!emit) {
-
-            return;
-
+        else {
+            return event.pageX - this.canvasRef.current.offsetLeft;
         }
+    };
 
-        var w = window.innerWidth;
-        var h = window.innerHeight;
-        this.setState(() => {
-            if (!isNaN(x0 / w)) {
-                socket.emit("drawing", {
-                    x0: x0 / w,
-                    y0: y0 / h,
-                    x1: x1 / w,
-                    y1: y1 / h,
-                    color: color,
-                    room: this.state.room,
-                    force: force
+    getY = (event) => {
+        if (event.pageY === undefined) {
+            return event.targetTouches[0].pageY - this.canvasRef.current.offsetTop;
+        }
+        else {
+            return event.pageY - this.canvasRef.current.offsetTop;
+        }
+    };
 
-                });
-                return {
-                    cleared: false
+    start = (event) => {
+        //if (activeTool === "pen") {
+        if(true) {
+            this.setState({
+                isDrawing: true,
+            })
+            this.state.ctx.beginPath();
+            this.state.ctx.moveTo(this.getX(event), this.getY(event));
+            event.preventDefault();
+        }
+    };
 
-                };
-
+    draw = (event, emit=false) => {
+        if (this.state.isDrawing) {
+            this.state.ctx.lineTo(this.getX(event), this.getY(event));
+            this.state.ctx.lineWidth = 5;
+            // this.state.ctx.lineJoin = "round";
+            this.state.ctx.stroke();
+            // console.log(emit)
+            if(emit) {
+                console.log('abort')
+                return;
+            } else {
+                console.log('emit')
+                // console.log(typeof(event))
+                // let stringEvent = JSON.stringify(event)
+                // console.log(socket)
+                socket.emit('drawing', {x: this.getX(event), y: this.getY(event)})
             }
-
-        });
-
-    };
-
-    onMouseDown = e => {
-
-        this.setState(() => {
-            return {
-                currentX: e.clientX,
-                currentY: e.clientY,
-                drawing: true
-            };
-
-        });
-
-    };
-
-    onMouseUp = e => {
-        this.setState(() => {
-            return {
-                drawing: false,
-                currentX: e.clientX,
-                currentY: e.clientY
-
-            };
-
-        });
-
-    };
-
-    onMouseMove = e => {
-        if (!this.state.drawing) {
-            return;
         }
-        this.setState(() => {
-            return {
-                currentX: e.clientX,
-                currentY: e.clientY
-
-            };
-
-        }, this.drawLine(this.state.currentX, this.state.currentY, e.clientX, e.clientY, this.state.currentColor, true));
-
+        // event.preventDefault();
     };
 
-
-
-    onTouchMove = e => {
-        if (!this.state.drawing) {
-            return;
-
-        }
-        console.log();
-        this.setState(() => {
-            this.drawLine(
-                this.state.currentX,
-                this.state.currentY,
-                e.touches[0].clientX,
-                e.touches[0].clientY,
-                this.state.currentColor,
-                true,
-                e.touches[0].force
-
-            );
-
-            return {
-                currentX: e.touches[0].clientX,
-                currentY: e.touches[0].clientY
-
-            };
-
-        });
-
-    };
-    onResize = () => {
-        this.setState({
-            windowWidth: window.innerWidth,
-            windowHeight: window.innerHeight
-
-        });
-
-    };
-
-    throttle = (callback, delay) => {
-        let previousCall = new Date().getTime();
-        return function() {
-            let time = new Date().getTime();
-            if (time - previousCall >= delay) {
-                previousCall = time;
-                callback.apply(null, arguments);
-            }
-
-        };
-
-    };
-
-    handleGuess = (str) => {
-        if(str === this.state.word) {
-            console.log("correct")
-            socket.emit('correct', this.state.word)
-
-        } else {
-            console.log("incorrect")
-        }
-
+    drawClient = (x, y) => {
+        this.state.ctx.lineTo(x, y);
+        this.state.ctx.lineWidth = 5;
+        // this.state.ctx.lineJoin = "round";
+        this.state.ctx.stroke();
     }
 
-
+    end = (event) => {
+        if (this.state.isDrawing) {
+            this.state.ctx.stroke();
+            this.state.ctx.closePath();
+            this.setState({
+                isDrawing: false,
+            })
+        }
+        event.preventDefault();
+    };
 
     render() {
-        let offset = 0;
-        const nav = document.querySelector('.navbar-container')
-        if(nav) {
-            offset = document.querySelector('.navbar-container').offsetHeight+50;
-
-        } else {
-            offset = 0;
-        }
 
         return (
-            <div className="canvas-container">
-                <canvas
-                    width={window.innerWidth}
-                    height={window.innerHeight-offset}
-                    className="canvas"
-                    ref={this.canvas}
-
-                />
-
-                {this.state.drawer ? "" : <Prompt word={this.state.word} handleGuess={this.handleGuess}/>}
-                {this.state.winner ? <span className="winner-message">{this.state.winner+"'s the winner! The word was " + this.state.word}</span>: ""}
-
-            </div>
-
-
-
+            <canvas
+                width={window.innerWidth}
+                height={window.innerHeight}
+                className="canvas"
+                ref={this.canvasRef}
+                onMouseDown={this.start}
+                onMouseMove={this.draw}
+                onMouseUp={this.end}
+            />
         );
-
     }
-
-
 
 }
