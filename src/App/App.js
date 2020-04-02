@@ -9,8 +9,8 @@ import Login from '../Login/Login'
 import Singup from '../Signup/Signup'
 
 const url = "http://localhost:8080"
-class App extends React.Component {
 
+class App extends React.Component {
     constructor() {
         super()
         this.state = {
@@ -18,32 +18,46 @@ class App extends React.Component {
             isLoggedIn: false,
         }
     }
-
     handleSignup = obj => {
         axios
+
             .post(url + "/api/users/create", obj)
+
             .then(res => {
+
                 console.log(res.data)
+
                 sessionStorage.username = res.data.username;
+
                 this.setState({
+
                     username: res.data.username
+
                 });
+
             })
-
             .then(_ => {})
+
             .catch(err => console.log(err));
-
     };
-
     handleLogin = obj => {
+
         console.log(obj)
+
         axios
+
             .post(url + "/api/users/username/" + obj.username, obj)
+
             .then(res => {
+
                 console.log(res.data)
+
                 sessionStorage.username = res.data;
+
                 this.setState({
+
                     isLoggedIn: true,
+
                     username: res.data
 
                 });
@@ -51,27 +65,40 @@ class App extends React.Component {
             })
 
             .catch(err => console.log(err));
+
     };
 
     handleLogout = e => {
+
         e.preventDefault();
+
         this.setState({
+
             isLoggedIn: false,
+
             username: ""
+
         });
+
         sessionStorage.clear();
+
         this.props.history.push("/login");
+
     };
 
     componentDidMount() {
+
         if(this.state.username) {
+
             this.setState({
+
                 isLoggedIn: true
+
             })
+
         }
+
     }
-
-
 
     render() {
 
@@ -81,9 +108,11 @@ class App extends React.Component {
 
                 <nav className="navbar-container">
 
-                    <div className="title-container">
+                    <div className="nav-title-container">
 
-                        <span>Pictionary</span>
+                        <i class="fas fa-paint-brush"></i>
+
+                        <span className="nav-title">Totally Not Pictionary</span>
 
                     </div>
 
@@ -93,7 +122,7 @@ class App extends React.Component {
 
                             <Link to="/login" className="nav-buttons">
 
-                                Login
+                                LOGIN
 
                             </Link>
 
@@ -103,7 +132,7 @@ class App extends React.Component {
 
                             <Link to="/signup" className="nav-buttons">
 
-                                Signup
+                                SIGNUP
 
                             </Link>
 
@@ -115,7 +144,7 @@ class App extends React.Component {
 
                 <span className="nav-greeting">
 
-                  {"Hello, " + this.state.username}
+                  {"HELLO, " + this.state.username}
 
                 </span>
 
@@ -127,7 +156,7 @@ class App extends React.Component {
 
                             <Link onClick={this.handleLogout} to="/" className="nav-buttons">
 
-                                Logout
+                                LOGOUT
 
                             </Link>
 
@@ -145,7 +174,7 @@ class App extends React.Component {
 
                 <Switch>
 
-                    {this.state.isLoggedIn ? <Route path="/" exact render={(props) => <Login handleLogin={this.handleLogin} isLoggedIn={this.state.isLoggedIn} {...props} />} />:
+                    {!this.state.isLoggedIn ? <Route path="/" exact render={(props) => <Login handleLogin={this.handleLogin} isLoggedIn={this.state.isLoggedIn} {...props} />} />:
 
                         <Route path="/" exact render={(props) => <Redirect to="/roomlist" {...props}/> } />}
 
