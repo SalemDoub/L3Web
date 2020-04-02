@@ -1,17 +1,9 @@
 import React, { Component } from "react";
-
 import io from "socket.io-client";
-
 import Prompt from '../Prompt/Prompt';
-
 import './Canvas.css'
 
-
-
 const socket = io('localhost:8080');
-
-
-
 export default class Canvas extends Component {
 
     constructor() {
@@ -30,21 +22,31 @@ export default class Canvas extends Component {
 
             drawer: true,
 
+            winner: "",
+
             word: "",
 
-            winner: null
+            room: null,
+
+            username: "",
+
+            over: false,
 
         }
 
-
-
         this.canvas = React.createRef();
 
+        const nav = document.querySelector('.navbar-container');
 
+        if(nav) {
 
+            this.offset = nav.offsetHeight;
 
+        } else {
 
+            this.offset = 0;
 
+        }
 
         socket.on('left', left => {
 
@@ -52,35 +54,37 @@ export default class Canvas extends Component {
 
         })
 
-
-
         socket.on('start', data => {
 
-            console.log(data.drawer, data.word)
+            console.log('start')
 
-            if(data.drawer !== this.props.username) {
+            if(data.room === this.state.room) {
 
-                this.setState({
+                console.log(data)
 
-                    drawer: false,
+                if(data.drawer !== this.props.username) {
 
-                    word: data.word,
+                    this.setState({
 
-                })
+                        drawer: false,
 
-            } else {
+                        word: data.word,
 
-                this.setState({
+                    })
 
-                    word: data.word
+                } else {
 
-                })
+                    this.setState({
+
+                        word: data.word
+
+                    })
+
+                }
 
             }
 
         })
-
-
 
         socket.on("drawing", data => {
 
@@ -88,9 +92,9 @@ export default class Canvas extends Component {
 
             let h = window.innerHeight;
 
+            // console.log('drawing')
 
-
-            if (!isNaN(data.x0 / w) && !isNaN(data.y0)) {
+            if (!isNaN(data.x0 / w) && !isNaN(data.y0) && data.room === this.state.room) {
 
                 this.drawLine(
 
@@ -110,43 +114,23 @@ export default class Canvas extends Component {
 
         });
 
-
-
-        socket.on('winner', data => {
-
-            console.log("the winner is " + data.winner + " the word was " + data.word)
-
-            this.setState({
-
-                winner: data.winner,
-
-            })
-
-
-
-        })
-
     }
-
-
-
-
 
     componentDidMount() {
 
         this.setState({
 
-            canvas: this.canvas.current
+            canvas: this.canvas.current,
+
+            room: this.props.room,
+
+            username: this.props.username,
 
         });
-
-
 
         this.canvas.current.style.height = window.innerHeight;
 
         this.canvas.current.style.width = window.innerWidth;
-
-
 
         this.canvas.current.addEventListener(
 
@@ -172,8 +156,6 @@ export default class Canvas extends Component {
 
         );
 
-
-
         this.canvas.current.addEventListener(
 
             "touchstart",
@@ -183,8 +165,6 @@ export default class Canvas extends Component {
             false
 
         );
-
-
 
         this.canvas.current.addEventListener(
 
@@ -196,33 +176,11 @@ export default class Canvas extends Component {
 
         );
 
-
-
         this.canvas.current.addEventListener("touchend", this.onMouseUp, false);
-
-
 
         window.addEventListener("resize", this.onResize);
 
-
-
-        if(sessionStorage.username) {
-
-            socket.emit("join", {
-
-                username: this.props.username,
-
-                room: this.props.room
-
-            });
-
-        }
-
-
-
     }
-
-
 
     componentDidUpdate() {
 
@@ -249,24 +207,16 @@ export default class Canvas extends Component {
             //   false
 
             // )
-
         }
 
-
-
     }
-
-
 
     shouldComponentUpdate(nextProp, nextState) {
 
         // if drawer is the same
 
         return this.state.drawer !== nextState.drawer;
-
     }
-
-
 
     drawLine = (x0, y0, x1, y1, color, emit, force) => {
 
@@ -274,9 +224,9 @@ export default class Canvas extends Component {
 
         context.beginPath();
 
-        context.moveTo(x0, y0-68);
+        context.moveTo(x0, y0-this.offset);
 
-        context.lineTo(x1, y1-68);
+        context.lineTo(x1, y1-this.offset);
 
         context.strokeStyle = color;
 
@@ -292,55 +242,48 @@ export default class Canvas extends Component {
 
         context.closePath();
 
-
-
         if (!emit) {
 
             return;
-
         }
 
         var w = window.innerWidth;
 
         var h = window.innerHeight;
 
-        this.setState(() => {
+        if (!isNaN(x0 / w)) {
 
-            if (!isNaN(x0 / w)) {
+            socket.emit("drawing", {
 
-                socket.emit("drawing", {
+                x0: x0 / w,
 
-                    x0: x0 / w,
+                y0: y0 / h,
 
-                    y0: y0 / h,
+                x1: x1 / w,
 
-                    x1: x1 / w,
+                y1: y1 / h,
 
-                    y1: y1 / h,
+                color: color,
 
-                    color: color,
+                room: this.state.room,
 
-                    room: this.state.room,
+                force: force
 
-                    force: force
+            })};
 
-                });
+        // this.setState(() => {
 
+        //     return {
 
+        //       cleared: false
 
-                return {
+        //     };
 
-                    cleared: false
+        //   }
 
-                };
-
-            }
-
-        });
+        // });
 
     };
-
-
 
     onMouseDown = e => {
 
@@ -360,8 +303,6 @@ export default class Canvas extends Component {
 
     };
 
-
-
     onMouseUp = e => {
 
         this.setState(() => {
@@ -380,8 +321,6 @@ export default class Canvas extends Component {
 
     };
 
-
-
     onMouseMove = e => {
 
         if (!this.state.drawing) {
@@ -389,8 +328,6 @@ export default class Canvas extends Component {
             return;
 
         }
-
-
 
         this.setState(() => {
 
@@ -405,8 +342,6 @@ export default class Canvas extends Component {
         }, this.drawLine(this.state.currentX, this.state.currentY, e.clientX, e.clientY, this.state.currentColor, true));
 
     };
-
-
 
     onTouchMove = e => {
 
@@ -450,8 +385,6 @@ export default class Canvas extends Component {
 
     };
 
-
-
     onResize = () => {
 
         this.setState({
@@ -464,8 +397,6 @@ export default class Canvas extends Component {
 
     };
 
-
-
     throttle = (callback, delay) => {
 
         let previousCall = new Date().getTime();
@@ -473,8 +404,6 @@ export default class Canvas extends Component {
         return function() {
 
             let time = new Date().getTime();
-
-
 
             if (time - previousCall >= delay) {
 
@@ -488,17 +417,13 @@ export default class Canvas extends Component {
 
     };
 
-
-
-
-
     handleGuess = (str) => {
 
         if(str === this.state.word) {
 
             console.log("correct")
 
-            socket.emit('correct', this.state.word)
+            socket.emit('correct', {word: this.state.word, winner: this.state.username})
 
         } else {
 
@@ -508,25 +433,7 @@ export default class Canvas extends Component {
 
     }
 
-
-
     render() {
-
-
-
-        let offset = 0;
-
-        const nav = document.querySelector('.navbar-container')
-
-        if(nav) {
-
-            offset = document.querySelector('.navbar-container').offsetHeight+50;
-
-        } else {
-
-            offset = 0;
-
-        }
 
         return (
 
@@ -536,7 +443,7 @@ export default class Canvas extends Component {
 
                     width={window.innerWidth}
 
-                    height={window.innerHeight-offset}
+                    height={window.innerHeight-this.offset}
 
                     className="canvas"
 
@@ -546,16 +453,9 @@ export default class Canvas extends Component {
 
                 {this.state.drawer ? "" : <Prompt word={this.state.word} handleGuess={this.handleGuess}/>}
 
-                {this.state.winner ? <span className="winner-message">{this.state.winner+"'s the winner! The word was " + this.state.word}</span>: ""}
-
             </div>
 
-
-
         );
-
     }
-
-
 
 }
