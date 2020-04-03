@@ -168,7 +168,7 @@ class App extends React.Component {
 
                 </nav>
 
-0                {/* <Canvas /> */}
+               {/* <Canvas /> */}
 
 
 
