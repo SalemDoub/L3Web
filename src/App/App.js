@@ -112,7 +112,7 @@ class App extends React.Component {
 
                         <i class="fas fa-paint-brush"></i>
 
-                        <span className="nav-title">Totally Not Pictionary</span>
+                        <span className="nav-title">Salem&&George Pictionary</span>
 
                     </div>
 
@@ -122,7 +122,7 @@ class App extends React.Component {
 
                             <Link to="/login" className="nav-buttons">
 
-                                LOGIN
+                                CONNEXION
 
                             </Link>
 
@@ -132,7 +132,7 @@ class App extends React.Component {
 
                             <Link to="/signup" className="nav-buttons">
 
-                                SIGNUP
+                                S'INSCRIRE
 
                             </Link>
 
@@ -168,7 +168,7 @@ class App extends React.Component {
 
                 </nav>
 
-                {/* <Canvas /> */}
+0                {/* <Canvas /> */}
 
 
 

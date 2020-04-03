@@ -1,25 +1,16 @@
 {
-  "name": "untitled1",
+  "name": "pictionary-react",
   "version": "0.1.0",
-  "engines": {
-    "node": "12.16.x",
-    "npm": "6.x",
-    "yarn": "1.x"
-  },
   "private": true,
+  "main": "index.js",
   "dependencies": {
     "axios": "^0.19.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "morgan": "^1.9.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-scripts": "^3.4.0",
-    "serve-favicon": "^2.5.0",
-    "socket.io-client": "^2.3.0"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-modal": "^3.9.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.0.1",
+    "socket.io-client": "^2.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

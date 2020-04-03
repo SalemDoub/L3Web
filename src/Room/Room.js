@@ -24,7 +24,7 @@ export default class Room extends Component {
 
         socket.on('winner', data => {
 
-            console.log("the winner is " + data.winner + " the word was " + data.word)
+            console.log("Le gagnant est : " + data.winner + " Le mot est : " + data.word)
             this.setState({
                 winner: data.winner,
                 word: data.word
@@ -98,9 +98,9 @@ export default class Room extends Component {
                     <div className="room-instruction-screen">
                         <div>
 
-                            When everyone joins, hit start to begin.
+                            Quand tous les joueurs rentrent à la salle , Appuyez sur BEGIN .
 
-                            This will pick who gets to draw and what the word is.
+                            Aléatoirement , Le Drawer et le mot à dessiner seront choisis .
 
                         </div>
 

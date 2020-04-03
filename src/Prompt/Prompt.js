@@ -21,7 +21,7 @@ export default class Prompt extends Component {
 
             <div className="guesser-prompt">
 
-                <span>Type your answer here, all words are lowercase</span>
+                <span>Ta réponse doit être en miniscule</span>
 
                 <form onSubmit={this.makeGuess}>
 
