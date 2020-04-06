@@ -5,10 +5,10 @@ import io from "socket.io-client";
 import './Room.css'
 
 const url = "http://localhost:8080/api/rooms/"
+
 const socket = io('localhost:8080');
 
 export default class Room extends Component {
-
     constructor(props){
         super(props)
         this.state = {
@@ -19,21 +19,19 @@ export default class Room extends Component {
             begin: false,
             playerCount: 0,
             creator: null,
-
         }
 
-        socket.on('winner', data => {
 
-            console.log("Le gagnant est : " + data.winner + " Le mot est : " + data.word)
+
+        socket.on('winner', data => {
+            console.log("the winner is " + data.winner + " the word was " + data.word)
             this.setState({
                 winner: data.winner,
                 word: data.word
             })
         })
-
         // k
         socket.on('users', data => {
-
             this.setState({
                 playerCount: data
             })
@@ -41,41 +39,41 @@ export default class Room extends Component {
 
         socket.on('clearInstructions', () => {
             const roomInstructions = document.querySelector('.room-instruction-screen');
-
             // console.log(roomInstructions)
             roomInstructions.style.display = "none";
             console.log('cleared')
-
         })
+
 
         socket.emit('roomCreated', {room: this.props.match.params.id, user: this.props.username})
+
     }
 
+
     componentDidMount() {
+
+
         this.setState({
-
             room: this.props.match.params.id
-
         })
         axios.get(url + this.props.match.params.id)
-
             .then(res => {
                 console.log(res.data)
                 this.setState({
                     name: res.data.name,
                     creator: res.data.creator
                 })
-
             })
             .catch(err => console.log(err))
+
         window.addEventListener('beforeunload', this.componentCleanup);
+
     }
+
+
     componentCleanup = () => { // this will hold the cleanup code
-
         // whatever you want to do when the component is unmounted or page refreshes
-
         socket.emit('leavingRoom', this.state.room);
-
     }
 
     beginGame = () => {
@@ -97,29 +95,17 @@ export default class Room extends Component {
                 {this.state.creator === this.props.username ?
                     <div className="room-instruction-screen">
                         <div>
-
-                            Quand tous les joueurs rentrent à la salle , Appuyez sur BEGIN .
-
-                            Aléatoirement , Le Drawer et le mot à dessiner seront choisis .
-
+                            When everyone joins, hit start to begin.
+                            This will pick who gets to draw and what the word is.
+                            Room number: {this.state.room}
                         </div>
-
                         <button onClick={this.beginGame}>Start</button>
-
                         <span><i className="fas fa-user-check"></i> {this.state.playerCount}</span>
-
                     </div> :
-
                     <div className="room-instruction-screen">Waiting for host</div>
-
                 }
-
                 <Canvas room={this.props.match.params.id} username={this.props.username}/>
-
             </div>
-
         )
-
     }
-
 }
