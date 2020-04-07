@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import io from "socket.io-client";
 import Prompt from '../Prompt/Prompt';
 import './Canvas.css'
-
 const socket = io('localhost:8080');
+
 export default class Canvas extends Component {
 
     constructor() {
@@ -34,7 +34,13 @@ export default class Canvas extends Component {
 
         }
 
+
+
         this.canvas = React.createRef();
+
+
+
+
 
         const nav = document.querySelector('.navbar-container');
 
@@ -48,11 +54,15 @@ export default class Canvas extends Component {
 
         }
 
+
+
         socket.on('left', left => {
 
             // this.setState({connected: left})
 
         })
+
+
 
         socket.on('start', data => {
 
@@ -86,6 +96,10 @@ export default class Canvas extends Component {
 
         })
 
+
+
+
+
         socket.on("drawing", data => {
 
             let w = window.innerWidth;
@@ -114,9 +128,19 @@ export default class Canvas extends Component {
 
         });
 
+
+
+
+
     }
 
+
+
+
+
     componentDidMount() {
+
+
 
         this.setState({
 
@@ -128,9 +152,13 @@ export default class Canvas extends Component {
 
         });
 
+
+
         this.canvas.current.style.height = window.innerHeight;
 
         this.canvas.current.style.width = window.innerWidth;
+
+
 
         this.canvas.current.addEventListener(
 
@@ -156,6 +184,8 @@ export default class Canvas extends Component {
 
         );
 
+
+
         this.canvas.current.addEventListener(
 
             "touchstart",
@@ -165,6 +195,8 @@ export default class Canvas extends Component {
             false
 
         );
+
+
 
         this.canvas.current.addEventListener(
 
@@ -176,11 +208,23 @@ export default class Canvas extends Component {
 
         );
 
+
+
         this.canvas.current.addEventListener("touchend", this.onMouseUp, false);
+
+
 
         window.addEventListener("resize", this.onResize);
 
+
+
+
+
+
+
     }
+
+
 
     componentDidUpdate() {
 
@@ -207,26 +251,36 @@ export default class Canvas extends Component {
             //   false
 
             // )
+
         }
 
+
+
     }
+
+
 
     shouldComponentUpdate(nextProp, nextState) {
 
         // if drawer is the same
 
         return this.state.drawer !== nextState.drawer;
+
     }
 
+
+
     drawLine = (x0, y0, x1, y1, color, emit, force) => {
+
+
 
         let context = this.state.canvas.getContext("2d");
 
         context.beginPath();
 
-        context.moveTo(x0, y0-this.offset);
+        context.moveTo(x0, y0-65);
 
-        context.lineTo(x1, y1-this.offset);
+        context.lineTo(x1, y1-65);
 
         context.strokeStyle = color;
 
@@ -242,9 +296,12 @@ export default class Canvas extends Component {
 
         context.closePath();
 
+
+
         if (!emit) {
 
             return;
+
         }
 
         var w = window.innerWidth;
@@ -273,6 +330,10 @@ export default class Canvas extends Component {
 
         // this.setState(() => {
 
+
+
+
+
         //     return {
 
         //       cleared: false
@@ -284,6 +345,8 @@ export default class Canvas extends Component {
         // });
 
     };
+
+
 
     onMouseDown = e => {
 
@@ -303,6 +366,8 @@ export default class Canvas extends Component {
 
     };
 
+
+
     onMouseUp = e => {
 
         this.setState(() => {
@@ -321,6 +386,8 @@ export default class Canvas extends Component {
 
     };
 
+
+
     onMouseMove = e => {
 
         if (!this.state.drawing) {
@@ -328,6 +395,8 @@ export default class Canvas extends Component {
             return;
 
         }
+
+
 
         this.setState(() => {
 
@@ -342,6 +411,8 @@ export default class Canvas extends Component {
         }, this.drawLine(this.state.currentX, this.state.currentY, e.clientX, e.clientY, this.state.currentColor, true));
 
     };
+
+
 
     onTouchMove = e => {
 
@@ -385,6 +456,8 @@ export default class Canvas extends Component {
 
     };
 
+
+
     onResize = () => {
 
         this.setState({
@@ -397,6 +470,8 @@ export default class Canvas extends Component {
 
     };
 
+
+
     throttle = (callback, delay) => {
 
         let previousCall = new Date().getTime();
@@ -404,6 +479,8 @@ export default class Canvas extends Component {
         return function() {
 
             let time = new Date().getTime();
+
+
 
             if (time - previousCall >= delay) {
 
@@ -416,6 +493,10 @@ export default class Canvas extends Component {
         };
 
     };
+
+
+
+
 
     handleGuess = (str) => {
 
@@ -433,7 +514,13 @@ export default class Canvas extends Component {
 
     }
 
+
+
     render() {
+
+
+
+
 
         return (
 
@@ -443,7 +530,7 @@ export default class Canvas extends Component {
 
                     width={window.innerWidth}
 
-                    height={window.innerHeight-this.offset}
+                    height={window.innerHeight-65}
 
                     className="canvas"
 
@@ -455,7 +542,12 @@ export default class Canvas extends Component {
 
             </div>
 
+
+
         );
+
     }
+
+
 
 }
