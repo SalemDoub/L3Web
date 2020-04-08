@@ -5,10 +5,11 @@ import Canvas from '../Canvas/Canvas'
 import io from "socket.io-client";
 import './Room.css'
 
-const url = "https://floating-inlet-46081.herokuapp.com/0/api/rooms/"
+//const currentURL = "https://floating-inlet-46081.herokuapp.com/0/api/rooms/"
+const currentURL="http://localhost:8080/api/rooms/"
 
-const socket = io('https://floating-inlet-46081.herokuapp.com/');
-
+//const socket = io('https://floating-inlet-46081.herokuapp.com/');
+const socket = io('localhost:8080/');
 export default class Room extends Component {
     constructor(props){
         super(props)
@@ -25,12 +26,12 @@ export default class Room extends Component {
 
 
         socket.on('winner', data => {
-            console.log("the winner is " + data.winner + " the word was " + data.word)
+            console.log("the winner is " + data.winner + " The word was " + data.word)
             this.setState({
                 winner: data.winner,
                 word: data.word
             })
-            axios.put(url+'edit/'+this.state.room, {active: false})
+            axios.put(currentURL+'edit/'+this.state.room, {active: false})
                 .then(res => {})
                 .catch(err => console.log(err))
 
@@ -47,7 +48,7 @@ export default class Room extends Component {
             const roomInstructions = document.querySelector('.room-instruction-screen-container');
             // console.log(roomInstructions)
             roomInstructions.style.display = "none";
-            console.log('cleared')
+
         })
 
 
@@ -62,7 +63,7 @@ export default class Room extends Component {
         this.setState({
             room: this.props.match.params.id
         })
-        axios.get(url + this.props.match.params.id)
+        axios.get(currentURL+ this.props.match.params.id)
             .then(res => {
                 // console.log(res.data)
                 this.setState({
@@ -91,7 +92,7 @@ export default class Room extends Component {
         socket.emit('clearInstructions')
         const roomInstructions = document.querySelector('.room-instruction-screen-container');
         roomInstructions.style.display = "none";
-        axios.put(url+'edit/'+this.state.room, {active: true})
+        axios.put(currentURL+'edit/'+this.state.room, {active: true})
             .then(res => {})
             .catch(err => console.log(err))
     }
