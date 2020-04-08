@@ -26,10 +26,11 @@ class App extends React.Component {
 
                 sessionStorage.username = res.data.username;
                 this.setState({
-                    username: res.data.username
+                    username: res.data.username,
+                    isLoggedIn: true
                 });
             })
-            .then(_ => {})
+            .then(_ => {this.props.history.push("/roomlist");})
             .catch(err => console.log(err));
     };
 
@@ -44,6 +45,7 @@ class App extends React.Component {
                     isLoggedIn: true,
                     username: res.data
                 });
+                this.props.history.push("/roomlist");
             })
             .catch(err => console.log(err));
     };
@@ -92,7 +94,7 @@ class App extends React.Component {
                         {this.state.isLoggedIn && (
                             <Link to="/user">
                 <span className="nav-greeting">
-                  {"HELLO, " + this.state.username}
+                  {"BONJOUR, " + this.state.username}
                 </span>
                             </Link>
                         )}
