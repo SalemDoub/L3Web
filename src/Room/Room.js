@@ -5,9 +5,9 @@ import Canvas from '../Canvas/Canvas'
 import io from "socket.io-client";
 import './Room.css'
 
-const url = "http://localhost:8080/api/rooms/"
+const url = "https://floating-inlet-46081.herokuapp.com/0/api/rooms/"
 
-const socket = io('localhost:8080');
+const socket = io('https://floating-inlet-46081.herokuapp.com/');
 
 export default class Room extends Component {
     constructor(props){

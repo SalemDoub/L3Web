@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import io from "socket.io-client";
 import Prompt from '../Prompt/Prompt';
 import './Canvas.css'
-const socket = io('localhost:8080');
+const socket = io('https://floating-inlet-46081.herokuapp.com/');
 
 export default class Canvas extends Component {
 
