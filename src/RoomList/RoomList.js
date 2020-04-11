@@ -4,22 +4,22 @@ import axios from 'axios'
 import Modal from "react-modal";
 import './RoomList.css'
 
-//const currentURL = "https://floating-inlet-46081.herokuapp.com/api/rooms/"
-const currentURL = "http:/localhost:8080/api/rooms/"
+
+
 const customStyles = {
     content: {
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        right: "auto",
-        bottom: "auto",
-        marginRight: "-50%",
-        transform: "translate(-50%, -50%)",
-        height: "40%",
-        width: "40%",
-        backgroundColor: "white"
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      height: "40%",
+      width: "40%",
+      backgroundColor: "white"
     }
-};
+  };
 
 
 export default class RoomList extends Component {
@@ -32,22 +32,10 @@ export default class RoomList extends Component {
         }
     }
 
-    componentDidMount() {
-        axios.get(currentURL)
-            .then(res => {
-                console.log(res.data)
-                this.setState({
-                    rooms: res.data
-                })
-            })
-            .catch(err => console.log(err))
-    }
-
     createRoom = e => {
         e.preventDefault()
-        axios.post(currentURL+'create', {name: e.target.name.value, creator: this.props.username})
+        axios.post('http://totallynotpictionary.herokuapp.com/api/rooms/create', {name: e.target.name.value, creator: this.props.username})
             .then(res => {
-                console.log(res)
                 let newRoomList = [...this.state.rooms]
                 newRoomList.push(res.data)
                 this.setState({
@@ -63,15 +51,15 @@ export default class RoomList extends Component {
 
     openModal = () => {
         this.setState({ modalIsOpen: true });
-    };
-
+      };
+    
     closeModal = () => {
         this.setState({ modalIsOpen: false });
     };
 
     findRoom = e => {
         e.preventDefault()
-        axios.get('http://localhost:8080/api/rooms/' + e.target.number.value)
+        axios.get('http://totallynotpictionary.herokuapp.com/api/rooms/' + e.target.number.value)
             .then(res => {
                 this.props.history.push("/room/"+res.data._id)
             })
@@ -80,20 +68,12 @@ export default class RoomList extends Component {
                 this.setState({
                     errorMessage: "Room not found",
                 })
-                // console.log(err)
             })
     }
 
     render() {
         return (
             <div className="roomlist-page-container">
-                {/* {
-                <div className="rooms-container">
-                    {this.state.rooms.map((room, index) => {
-                        return <Link key={index} to={"/room/"+room._id}><div key={index} className="room-div">{room.name}</div></Link>
-                    })}
-                </div> */}
-
                 <div className="roomlist-prompt-container">
                     <span className="error-message">{this.state.errorMessage}</span>
                     <span>Enter room number: </span>
@@ -118,13 +98,13 @@ export default class RoomList extends Component {
                         </label>
                         <input className="submit" type="submit" value="Create"/>
                         <label>
-                            You'll be automatically redirected to your new room
+                           You'll be automatically redirected to your new room !
                         </label>
-
+                      
                     </form>
                 </Modal>
             </div>
-
+            
         )
     }
 }

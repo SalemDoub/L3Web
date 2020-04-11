@@ -26,16 +26,6 @@
     height: 100%;
 }
 
-/* .winner-message-container {
-    display: none;
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    background-color: white;
-    z-index: 300;
-
-} */
-
 .winner-message {
     position: absolute;
     margin: 0 -10%;
@@ -46,3 +36,9 @@
     border: 1px solid black;
     border-radius: 50px;
 }
+
+@media all and (max-width: 480px) {
+    .roomlist-prompt-container {
+      width: 70vw;
+    }
+  }

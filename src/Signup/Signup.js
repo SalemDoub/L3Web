@@ -4,28 +4,27 @@ export default class Signup extends Component {
     constructor() {
         super();
         this.state = {
-            isValid: true,
-            text: ""
+          isValid: true,
+          text: ""
         };
-    }
-
-    compileForm = e => {
+      }
+    
+      compileForm = e => {
         e.preventDefault();
-
+    
         let t = e.target;
         if (!t.username.value || !t.password.value || !t.confirmPassword.value) {
-            this.setState({ isValid: false });
+          this.setState({ isValid: false });
         } else {
-            let returnedObj = {
-                username: t.username.value,
-                password: t.password.value,
-            };
+          let returnedObj = {
+            username: t.username.value,
+            password: t.password.value,
+          };
 
-            this.props.handleSignup(returnedObj);
-            this.setState({ isValid: true });
-            this.props.history.push("/rooms");
+          this.props.handleSignup(returnedObj);
+          this.setState({ isValid: true });
         }
-    };
+      };
     render() {
         return (
             <div className="login-container">
