@@ -43,7 +43,7 @@ io.sockets.on('connection', socket => {
 
         // When host starts game, a random word is generated and sent to all clients in the room
         socket.on('begin', data => {
-            axios.get("https://totallynotpictionary.herokuapp.com/api/words/random")
+            axios.get("https://floating-inlet-46081.herokuapp.com/api/words/random")
                 .then(res => {
                     word = res.data.name;
                 })

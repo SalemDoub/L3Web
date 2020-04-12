@@ -7,7 +7,7 @@ import RoomList from '../RoomList/RoomList'
 import Login from '../Login/Login'
 import Singup from '../Signup/Signup'
 
-const currentURL = "https://totallynotpictionary.herokuapp.com"
+const currentURL = "https://floating-inlet-46081.herokuapp.com"
 // const currentURL = "http://localhost:8080"
 
 class App extends React.Component {

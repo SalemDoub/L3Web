@@ -34,7 +34,7 @@ export default class RoomList extends Component {
 
     createRoom = e => {
         e.preventDefault()
-        axios.post('http://totallynotpictionary.herokuapp.com/api/rooms/create', {name: e.target.name.value, creator: this.props.username})
+        axios.post('https://floating-inlet-46081.herokuapp.com/api/rooms/create', {name: e.target.name.value, creator: this.props.username})
             .then(res => {
                 let newRoomList = [...this.state.rooms]
                 newRoomList.push(res.data)
@@ -59,7 +59,7 @@ export default class RoomList extends Component {
 
     findRoom = e => {
         e.preventDefault()
-        axios.get('http://totallynotpictionary.herokuapp.com/api/rooms/' + e.target.number.value)
+        axios.get('https://floating-inlet-46081.herokuapp.com/api/rooms/' + e.target.number.value)
             .then(res => {
                 this.props.history.push("/room/"+res.data._id)
             })
