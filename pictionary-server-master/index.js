@@ -43,25 +43,26 @@ io.sockets.on('connection', socket => {
 
         // When host starts game, a random word is generated and sent to all clients in the room
         socket.on('begin', data => {
-            axios.get("https://floating-inlet-46081.herokuapp.com/api/words/random")
+            axios.get("https://floating-inlet-46081.herokuapp.com//api/words/random")
                 .then(res => {
-                    word = res.data.name;
+                    let word = res.data.name;
                 })
                 .then(_ => {
                     // TODO: CHECK IF THERE AT LEAST 2 PLAYERS IN HERE, IF NOT SEND NOT ENOUGH PLAYERS JOINED
 
                     // Gets a list of all users currently in this room, pushes them to an array
                     // (so server can pick a random player to become thedrawer)
-                    var currentClients = io.sockets.adapter.rooms[data].sockets;
-                    currentUsersInRoom = []
-                    for (var clientId in currentClients ) {
+                   let currentClients = io.sockets.adapter.rooms[data].sockets;
+                  let   currentUsersInRoom = []
+                    for (let clientId in currentClients ) {
                         users.forEach(user => {
                             if(user.id === clientId) {
                                 currentUsersInRoom.push(user)
                             }
                         })
                     }
-                    drawer = currentUsersInRoom[chooseDrawer(currentUsersInRoom.length)]
+                  let   drawer = currentUsersInRoom[chooseDrawer(currentUsersInRoom.length)]
+                    let word = _.data.name;
                     // Send who the drawer is and random word to users in the room
                     io.emit('start', {drawer: drawer.user, word: word, room: data})
                 })

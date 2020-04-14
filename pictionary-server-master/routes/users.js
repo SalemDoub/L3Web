@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 // Controller to find specific function implementations
-const userController = require('../controllers/users')
+const userController = require('../controllers/users');
 
 router.post('/username/:username/', userController.findByName)
 router.post('/create', userController.create)
